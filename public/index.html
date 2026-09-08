@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Numerología | Descubre tu número</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Arial';
+    background: black;
+    color: #f0e9dd;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  header .symbol {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+    background-image: url('https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Google_Gemini_icon_2025.svg/500px-Google_Gemini_icon_2025.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  header h1 {
+    font-size: 30px;
+    font-weight: normal;
+    letter-spacing: 2px;
+    margin-top: 8px;
+    color: white;
+  }
+
+  header p {
+    color: #ccc;
+    font-size: 18px;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  .card {
+    background: #1b1b1b;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  }
+
+  .tabs {
+    display: flex;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(201, 169, 97, 0.2);
+  }
+
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    letter-spacing: 1px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.25s;
+  }
+
+  .tab.active {
+    color: white;
+    border-bottom: 2px solid #025bff;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.35s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  label {
+    display: block;
+    font-size: 15px;
+    color: white;
+    margin-bottom: 6px;
+    margin-top: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  input {
+    width: 100%;
+    padding: 11px 13px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(37, 37, 35, 0.25);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border 0.2s;
+  }
+
+  input:focus {
+    border-color: #585858;
+  }
+
+  button.main-btn {
+    width: 100%;
+    margin-top: 22px;
+    padding: 13px;
+    background: rgb(20, 117, 243);
+    color: #1a1530;
+    font-weight: bold;
+    font-size: 16px;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  button.main-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .link-btn {
+    display: block;
+    text-align: center;
+    margin-top: 16px;
+    color: #a89bb8;
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .msg {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    display: none;
+  }
+
+  .msg.error {
+    background: rgba(229, 115, 115, 0.15);
+    border: 1px solid rgba(229, 115, 115, 0.4);
+    color: #e57373;
+    display: block;
+  }
+
+  .msg.success {
+    background: rgba(201, 169, 97, 0.15);
+    border: 1px solid rgba(201, 169, 97, 0.4);
+    color: #e8c877;
+    display: block;
+  }
+
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .top-bar span {
+    font-size: 15px;
+    color: #ccc;
+  }
+
+  .top-bar .logout {
+    padding: 8px 16px;
+    background: transparent;
+    color: #e57373;
+    border: 1px solid #e57373;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .result-box {
+    margin-top: 18px;
+    background: rgb(119 118 118 / 8%);
+    border: 1px solid rgb(103 99 91 / 30%);
+    border-radius: 10px;
+    padding: 20px;
+    display: none;
+  }
+
+  .result-box .number {
+    font-size: 48px;
+    text-align: center;
+    color: white;
+  }
+
+  .result-box .desc {
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #f0e9dd;
+    white-space: pre-wrap;
+  }
+
+  .spinner {
+    display: none;
+    text-align: center;
+    color: #ccc;
+    font-size: 13px;
+    margin-top: 14px;
+  }
+
+  .api-config {
+    text-align: center;
+    margin-top: 18px;
+  }
+
+  .api-config input {
+    text-align: center;
+    font-size: 15px;
+    color: white;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed rgba(201,169,97,0.3);
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div class="symbol"></div>
+    <h1>NUMEROLOGÍA</h1>
+    <p>Descubre lo que los números revelan de ti</p>
+  </header>
+
+  <div class="card">
+
+    <!-- AUTH VIEW -->
+    <div id="auth-section">
+      <div class="tabs">
+        <div class="tab active" data-tab="login">Iniciar sesión</div>
+        <div class="tab" data-tab="register">Registrarse</div>
+      </div>
+
+      <div id="login" class="view active">
+        <label>Correo electrónico</label>
+        <input type="email" id="login-email" placeholder="joymargd2.2@gmail.com">
+        <label>Contraseña</label>
+        <input type="password" id="login-password" placeholder="••••••••">
+        <button class="main-btn" onclick="login()">Entrar</button>
+        <div class="msg" id="login-msg"></div>
+      </div>
+
+      <div id="register" class="view">
+        <label>Nombre completo</label>
+        <input type="text" id="reg-nombre" placeholder="Joymar Ricardo Pinto Ortiz">
+        <label>Correo electrónico</label>
+        <input type="email" id="reg-email" placeholder="joymargd2.2@gmail.com">
+        <label>Contraseña</label>
+        <input type="password" id="reg-password" placeholder="••••••••">
+        <label>Fecha de nacimiento</label>
+        <input type="date" id="reg-fecha">
+        <button class="main-btn" onclick="register()">Crear cuenta</button>
+        <div class="msg" id="register-msg"></div>
+      </div>
+    </div>
+
+    <!-- APP VIEW (after login) -->
+    <div id="app-section" style="display:none;">
+      <div class="top-bar">
+        <span id="user-greeting">Bienvenido</span>
+        <span class="logout" onclick="logout()">Cerrar sesión</span>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" data-apptab="reading">Mi lectura</div>
+        <div class="tab" data-apptab="compat">Compatibilidad</div>
+      </div>
+
+      <div id="reading" class="view active">
+        <button class="main-btn" onclick="generateReading()">Generar mi lectura numerológica</button>
+        <div class="spinner" id="reading-spinner">Consultando los números... ✦</div>
+        <div class="msg" id="reading-msg"></div>
+        <div class="result-box" id="reading-result">
+          <div class="number" id="reading-number">-</div>
+          <div class="desc" id="reading-desc"></div>
+        </div>
+      </div>
+
+      <div id="compat" class="view">
+        <label>ID del otro usuario</label>
+        <input type="text" id="compat-userid" placeholder="Ej: 6aa05388ee7057af45dcbac4">
+        <p style="font-size:12px;color:#ccc;margin-top:6px;">
+          Ambos usuarios deben haber generado su lectura numerológica primero.
+        </p>
+        <button class="main-btn" onclick="calculateCompat()">Calcular compatibilidad</button>
+        <div class="spinner" id="compat-spinner">Comparando energías... ✦</div>
+        <div class="msg" id="compat-msg"></div>
+        <div class="result-box" id="compat-result">
+          <div class="number" id="compat-number">-</div>
+          <div class="desc" id="compat-desc"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="api-config">
+      <input type="text" id="api-base" value="http://localhost:3000/api/v1" onchange="saveApiBase()">
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ---- Config ----
+  let API_BASE = localStorage.getItem('numerologia_api_base') || 'http://localhost:3000/api/v1';
+  document.getElementById('api-base').value = API_BASE;
+  let TOKEN = null; // en memoria, no usamos localStorage para el token por seguridad de sesión
+
+  function saveApiBase() {
+    API_BASE = document.getElementById('api-base').value.trim();
+    localStorage.setItem('numerologia_api_base', API_BASE);
+  }
+
+  // ---- Tabs (auth) ----
+  document.querySelectorAll('.tab[data-tab]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab[data-tab]').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('#auth-section .view').forEach(v => v.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ---- Tabs (app) ----
+  document.querySelectorAll('.tab[data-apptab]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab[data-apptab]').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('#app-section .view').forEach(v => v.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.apptab).classList.add('active');
+    });
+  });
+
+  function showMsg(id, text, type) {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = 'msg ' + type;
+  }
+
+  function clearMsg(id) {
+    const el = document.getElementById(id);
+    el.textContent = '';
+    el.className = 'msg';
+  }
+
+  // ---- Auth ----
+  async function register() {
+    clearMsg('register-msg');
+    const nombreCompleto = document.getElementById('reg-nombre').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const fechaNacimiento = document.getElementById('reg-fecha').value;
+
+    if (!nombreCompleto || !email || !password || !fechaNacimiento) {
+      showMsg('register-msg', 'Completa todos los campos.', 'error');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombreCompleto, email, password, fechaNacimiento })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showMsg('register-msg', data.message || 'Error al registrar.', 'error');
+        return;
+      }
+      showMsg('register-msg', '¡Cuenta creada! Ahora inicia sesión.', 'success');
+      document.querySelector('.tab[data-tab="login"]').click();
+      document.getElementById('login-email').value = email;
+    } catch (err) {
+      showMsg('register-msg', 'No se pudo conectar con la API. Revisa la URL base abajo.', 'error');
+    }
+  }
+
+  async function login() {
+    clearMsg('login-msg');
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    if (!email || !password) {
+      showMsg('login-msg', 'Ingresa correo y contraseña.', 'error');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showMsg('login-msg', data.message || 'Credenciales incorrectas.', 'error');
+        return;
+      }
+      TOKEN = data.token || data.accessToken || null;
+      document.getElementById('user-greeting').textContent = `Hola, ${data.user?.nombreCompleto || email}`;
+      document.getElementById('auth-section').style.display = 'none';
+      document.getElementById('app-section').style.display = 'block';
+    } catch (err) {
+      showMsg('login-msg', 'No se pudo conectar con la API. Revisa la URL base abajo.', 'error');
+    }
+  }
+
+  function logout() {
+    TOKEN = null;
+    document.getElementById('app-section').style.display = 'none';
+    document.getElementById('auth-section').style.display = 'block';
+    document.getElementById('reading-result').style.display = 'none';
+    document.getElementById('compat-result').style.display = 'none';
+  }
+
+  function authHeaders() {
+    const headers = { 'Content-Type': 'application/json' };
+    if (TOKEN) headers['Authorization'] = `Bearer ${TOKEN}`;
+    return headers;
+  }
+
+  // ---- Reading ----
+  async function generateReading() {
+    clearMsg('reading-msg');
+    document.getElementById('reading-result').style.display = 'none';
+    document.getElementById('reading-spinner').style.display = 'block';
+
+    try {
+      const res = await fetch(`${API_BASE}/readings/generate`, {
+        method: 'POST',
+        headers: authHeaders()
+      });
+      const data = await res.json();
+      document.getElementById('reading-spinner').style.display = 'none';
+
+      if (!res.ok) {
+        showMsg('reading-msg', data.message || 'No se pudo generar la lectura.', 'error');
+        return;
+      }
+
+      document.getElementById('reading-number').textContent = data.numero || data.number || '✦';
+      document.getElementById('reading-desc').textContent = data.descripcion || data.description || JSON.stringify(data, null, 2);
+      document.getElementById('reading-result').style.display = 'block';
+    } catch (err) {
+      document.getElementById('reading-spinner').style.display = 'none';
+      showMsg('reading-msg', 'No se pudo conectar con la API.', 'error');
+    }
+  }
+
+  // ---- Compatibility ----
+  async function calculateCompat() {
+    clearMsg('compat-msg');
+    document.getElementById('compat-result').style.display = 'none';
+    const userId = document.getElementById('compat-userid').value.trim();
+
+    if (!userId) {
+      showMsg('compat-msg', 'Ingresa el ID del otro usuario.', 'error');
+      return;
+    }
+
+    document.getElementById('compat-spinner').style.display = 'block';
+
+    try {
+      const res = await fetch(`${API_BASE}/compatibility/calculate`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ userId })
+      });
+      const data = await res.json();
+      document.getElementById('compat-spinner').style.display = 'none';
+
+      if (!res.ok) {
+        showMsg('compat-msg', data.message || data.error || 'No se pudo calcular.', 'error');
+        return;
+      }
+
+      const resultado = data.resultado || {};
+      document.getElementById('compat-number').textContent = (resultado.porcentaje ?? '?') + '%';
+      document.getElementById('compat-desc').textContent = `Nivel de compatibilidad: ${resultado.nivel || 'N/A'}`;
+      document.getElementById('compat-result').style.display = 'block';
+    } catch (err) {
+      document.getElementById('compat-spinner').style.display = 'none';
+      showMsg('compat-msg', 'No se pudo conectar con la API.', 'error');
+    }
+  }
+</script>
+
+</body>
+</html>
