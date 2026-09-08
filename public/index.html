@@ -457,6 +457,20 @@
     document.getElementById('reading-spinner').style.display = 'block';
 
     try {
+      // Paso 1: calcular/actualizar el perfil numerológico del usuario (idempotente)
+      const calcRes = await fetch(`${API_BASE}/numerology/calculate`, {
+        method: 'POST',
+        headers: authHeaders()
+      });
+      const calcData = await calcRes.json();
+
+      if (!calcRes.ok) {
+        document.getElementById('reading-spinner').style.display = 'none';
+        showMsg('reading-msg', calcData.message || 'No se pudo calcular el perfil.', 'error');
+        return;
+      }
+
+      // Paso 2: generar la lectura ya con el perfil calculado
       const res = await fetch(`${API_BASE}/readings/generate`, {
         method: 'POST',
         headers: authHeaders()
@@ -469,7 +483,7 @@
         return;
       }
 
-      document.getElementById('reading-number').textContent = data.numero || data.number || '✦';
+      document.getElementById('reading-number').textContent = data.numero || data.number || data.numeroVida || '✦';
       document.getElementById('reading-desc').textContent = data.descripcion || data.description || JSON.stringify(data, null, 2);
       document.getElementById('reading-result').style.display = 'block';
     } catch (err) {
