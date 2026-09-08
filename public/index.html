@@ -255,8 +255,6 @@
   </header>
 
   <div class="card">
-
-    <!-- AUTH VIEW -->
     <div id="auth-section">
       <div class="tabs">
         <div class="tab active" data-tab="login">Iniciar sesión</div>
@@ -286,7 +284,6 @@
       </div>
     </div>
 
-    <!-- APP VIEW (after login) -->
     <div id="app-section" style="display:none;">
       <div class="top-bar">
         <span id="user-greeting">Bienvenido</span>
@@ -332,17 +329,15 @@
 </div>
 
 <script>
-  // ---- Config ----
   let API_BASE = localStorage.getItem('numerologia_api_base') || 'http://localhost:3000/api/v1';
   document.getElementById('api-base').value = API_BASE;
-  let TOKEN = null; // en memoria, no usamos localStorage para el token por seguridad de sesión
+  let TOKEN = null;
 
   function saveApiBase() {
     API_BASE = document.getElementById('api-base').value.trim();
     localStorage.setItem('numerologia_api_base', API_BASE);
   }
 
-  // ---- Tabs (auth) ----
   document.querySelectorAll('.tab[data-tab]').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.tab[data-tab]').forEach(t => t.classList.remove('active'));
@@ -352,7 +347,6 @@
     });
   });
 
-  // ---- Tabs (app) ----
   document.querySelectorAll('.tab[data-apptab]').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.tab[data-apptab]').forEach(t => t.classList.remove('active'));
@@ -374,7 +368,6 @@
     el.className = 'msg';
   }
 
-  // ---- Auth ----
   async function register() {
     clearMsg('register-msg');
     const nombreCompleto = document.getElementById('reg-nombre').value.trim();
@@ -450,14 +443,12 @@
     return headers;
   }
 
-  // ---- Reading ----
   async function generateReading() {
     clearMsg('reading-msg');
     document.getElementById('reading-result').style.display = 'none';
     document.getElementById('reading-spinner').style.display = 'block';
 
     try {
-      // Paso 1: calcular/actualizar el perfil numerológico del usuario (idempotente)
       const calcRes = await fetch(`${API_BASE}/numerology/calculate`, {
         method: 'POST',
         headers: authHeaders()
@@ -470,7 +461,6 @@
         return;
       }
 
-      // Paso 2: generar la lectura ya con el perfil calculado
       const res = await fetch(`${API_BASE}/readings/generate`, {
         method: 'POST',
         headers: authHeaders()
@@ -492,7 +482,6 @@
     }
   }
 
-  // ---- Compatibility ----
   async function calculateCompat() {
     clearMsg('compat-msg');
     document.getElementById('compat-result').style.display = 'none';
