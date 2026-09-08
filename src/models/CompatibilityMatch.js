@@ -2,19 +2,19 @@ const mongoose = require("mongoose");
 
 const compatibilitySchema = new mongoose.Schema({
 
-    user1: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
 
-    user2: {
+    compatibleUserId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
 
-    puntaje: Number,
+    porcentaje: Number,
 
-    intepretacion: String,
+    nivel: String,
 
     fecha: {
         type: Date,
@@ -23,4 +23,4 @@ const compatibilitySchema = new mongoose.Schema({
 
 });
 
-module.exports=mongoose.model("CompatibilityMatch",compatibilitySchema);
+module.exports = mongoose.model("CompatibilityMatch", compatibilitySchema);
